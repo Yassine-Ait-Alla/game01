@@ -31,6 +31,10 @@ public class gameManager : MonoBehaviour
 		}
 	}
 	
+	public void Reset()
+	{
+		PlayerPrefs.DeleteAll();
+	}
 
 	public void	Save()
 	{

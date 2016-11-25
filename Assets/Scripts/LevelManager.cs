@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
 
 public class LevelManager : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class LevelManager : MonoBehaviour
 	public float			silverTime;
 	public float			goldTime;
 
+	public Text				speed;
+	public Text				time;
+
 	private void Start ()
 	{
 		//PlayerPrefs.DeleteAll();
@@ -28,31 +32,30 @@ public class LevelManager : MonoBehaviour
 		player = GameObject.FindGameObjectWithTag("Player");
 		player.transform.position = respawn.position;
 	}
-	
-	public void		TogglePauseMenu()
-	{
-		pauseMenu.SetActive(!pauseMenu.activeSelf);
-	}
 
-	public void		ToMenu()
+	private void Update ()
 	{
-		Application.LoadLevel("MainMenu");
+		time.text = "TIME : " + Time.time.ToString();
+		speed.text = "SPEED : " + player.GetComponent<Rigidbody>().velocity.magnitude.ToString();
+		if (player.transform.position.y < -10.0f)
+			Death();
 	}
-
 
 	public void		Victory()
 	{
 		float duration = Time.time - startTime;
+		/*
 		Debug.Log("VICTORY");
 		Debug.Log(duration);
 		Debug.Log(goldTime);
+		*/
 		if (duration < goldTime)
 			gameManager.Instance.currency += 50;
 		else if (duration < silverTime)
 			gameManager.Instance.currency += 25;
 		else
 			gameManager.Instance.currency += 10;
-		Debug.Log("currency = " + gameManager.Instance.currency);
+		//Debug.Log("currency = " + gameManager.Instance.currency);
 		gameManager.Instance.Save();
 
 		string	saveString = "";
@@ -68,14 +71,39 @@ public class LevelManager : MonoBehaviour
 		PlayerPrefs.SetString(Application.loadedLevelName, saveString);
 
 		//Behaviour of Victory
-		//Application.LoadLevel("");
+		Application.LoadLevel("MainMenu");
+	}
+	
+	public void		TogglePauseMenu()
+	{
+		pauseMenu.SetActive(!pauseMenu.activeSelf);
+		Time.timeScale = Time.timeScale == 1 ? 0 : 1;
 	}
 
-	private void Update ()
+	public void		ToMenu()
 	{
-		/*
-		if (player.tranform.position.y < -10.0f)
-			player.transform.position
-			*/
+		Application.LoadLevel("MainMenu");
+		Time.timeScale = 1;
 	}
+
+	public void	Death()
+	{
+		player.transform.position = respawn.position;
+		player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+		player.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+	}
+
+	public void	Restart()
+	{
+		Application.LoadLevel(Application.loadedLevelName);
+		Time.timeScale = 1;
+	}
+
+	public void	NextLevel()
+	{
+		string		next = (Application.loadedLevelName[0] - '0' + 1).ToString() + "_level";
+		Application.LoadLevel(next);
+		Time.timeScale = 1;
+	}
+
 }

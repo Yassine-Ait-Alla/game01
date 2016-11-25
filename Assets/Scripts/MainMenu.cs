@@ -126,6 +126,12 @@ public class MainMenu : MonoBehaviour
 		cameraDesiredLookAt = menuTransform;
 	}
 	
+	public void		Reset()
+	{
+		PlayerPrefs.DeleteAll();
+		gameManager.Instance.Reset();
+	}
+
 	private void	ChangePlayerSkin(int index)
 	{
 		if ((gameManager.Instance.skinAvailable & 1 << index) == 1 << index)
@@ -152,12 +158,12 @@ public class MainMenu : MonoBehaviour
 		{
 			int			cost = priceGrid[index];
 
-				Debug.Log("Currency = " + gameManager.Instance.currency);
-				Debug.Log("Cost = " + cost);
+				//Debug.Log("Currency = " + gameManager.Instance.currency);
+				//Debug.Log("Cost = " + cost);
 			if (gameManager.Instance.currency >= cost)
 			{
 				gameManager.Instance.currency -= cost;
-				Debug.Log("Currency = " + gameManager.Instance.currency);
+				//Debug.Log("Currency = " + gameManager.Instance.currency);
 				gameManager.Instance.skinAvailable += 1 << index;
 				gameManager.Instance.Save();
 				shopButtonContainer.transform.GetChild(index).GetChild(0).gameObject.SetActive(false);

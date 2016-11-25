@@ -18,6 +18,8 @@ public class Motor : MonoBehaviour
 	private Rigidbody		controller;
 	private Transform		camTransform;
 
+	public static bool		jump = false;
+
 	private void Start ()
 	{
 		controller = GetComponent<Rigidbody>();
@@ -45,10 +47,24 @@ public class Motor : MonoBehaviour
 		//Rotate direction Vector with canera
 		Vector3 rotatedDir = camTransform.TransformDirection(dir);
 		rotatedDir = new Vector3(rotatedDir.x, 0, rotatedDir.z);
-		rotatedDir = 3 * rotatedDir.normalized * dir.magnitude;
+		rotatedDir = rotatedDir.normalized * dir.magnitude;
 
 		controller.AddForce(rotatedDir * moveSpeed);
 
+		if (Input.GetKeyDown(KeyCode.C))
+			Jump();
+
+		if (Input.GetKeyDown(KeyCode.B))
+			Boost();
+	}
+
+	public void Jump()
+	{
+		if (!jump)
+		{
+			controller.AddForce(Vector3.up * 10, ForceMode.Impulse);
+		}
+		jump = true;
 	}
 
 	public void Boost()
